@@ -4,35 +4,55 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../css/main.css">
     <title>Document</title>
 </head>
 <body>
-    <img src="https://api.qrserver.com/v1/create-qr-code/?data=qrcode_example&size=100x100" alt="qr code" id="qrCodeImg"/>
-    <p id="ticketCode">xxxxxxxx-xxxx-xxxx-xxxxx-xxxxxxxxxxxx</p>
-    <form action="" method="post">
-        <button type="button" id="btnGenerate">Gerar código</button>
-    </form>
+    <div id="termAcceptance" class="modal">
+        <h1>
+            Termo de aceite
+        </h1>
+        <p>
+            Lorem, ipsum dolor sit amet consectetur adipisicing elit.
+        </p>
+        <button type="button" id="termAcceptanceBtn">
+            Aceitar
+        </button>
+    </div>
+
+    </div>
+    <main id="qrCodeSection" class="main disabled">
+        <img src="https://api.qrserver.com/v1/create-qr-code/?data=qrcode_example&size=100x100" alt="qr code" id="qrCodeImg"/>
+        <p id="ticketCode">xxxxxxxx-xxxx-xxxx-xxxxx-xxxxxxxxxxxx</p>
+        <form action="" method="post">
+            <button type="button" id="btnGenerate">Gerar código</button>
+        </form>
+    </main>
+
+
     <script src="../js/createTicket.js"></script>
     <script>
+        const btnTermAcceptance = document.getElementById('termAcceptanceBtn');
+        const divTermAcceptance = document.getElementById('termAcceptance');
+        const qrCodeSection = document.getElementById('qrCodeSection');
+
+        btnTermAcceptance.addEventListener('click', () => {
+            qrCodeSection.classList.remove('disabled')
+            divTermAcceptance.classList.add('disabled');
+        })
+
         const createTicketBtn = document.getElementById('btnGenerate');
         const qrCodeImg = document.getElementById('qrCodeImg');
         const ticketCode = document.getElementById('ticketCode');
 
         createTicketBtn.addEventListener('click', async () => {
-            let newTicketCode = await fetch('http://localhost:8080/tickets/create', {
-                method: 'POST',
-            })
-            .then(res => res.json())
-            .then(res => res)
-            .catch(() => {
-                return 'Erro ao gerar código!';
-            })
-
-            console.log(newTicketCode)
+            let newTicketCode = await createTicket();
 
             qrCodeImg.src = `https://api.qrserver.com/v1/create-qr-code/?data=${newTicketCode.id_ticket}&size=100x100`;
 
-            ticketCode.textContent = newTicketCode.id_ticket;
+            ticketCode.textContent = newTicketCode.id_ticket || newTicketCode.error;
+
+            navigator.clipboard.writeText(newTicketCode.id_ticket);
         })
     </script>
 </body>

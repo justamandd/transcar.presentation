@@ -1,0 +1,12 @@
+.modal {
+    display: block;
+}
+
+.main {
+    display: block;
+}
+
+.modal.disabled,
+.main.disabled {
+    display: none;
+}
