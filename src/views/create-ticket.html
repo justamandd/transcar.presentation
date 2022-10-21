@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en_US">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <img src="https://api.qrserver.com/v1/create-qr-code/?data=qrcode_example&size=100x100" alt="qr code" id="qrCodeImg"/>
+    <p id="ticketCode">xxxxxxxx-xxxx-xxxx-xxxxx-xxxxxxxxxxxx</p>
+    <form action="" method="post">
+        <button type="button" id="btnGenerate">Gerar código</button>
+    </form>
+    <script src="../js/createTicket.js"></script>
+    <script>
+        const createTicketBtn = document.getElementById('btnGenerate');
+        const qrCodeImg = document.getElementById('qrCodeImg');
+        const ticketCode = document.getElementById('ticketCode');
+
+        createTicketBtn.addEventListener('click', async () => {
+            let newTicketCode = await fetch('http://localhost:8080/tickets/create', {
+                method: 'POST',
+            })
+            .then(res => res.json())
+            .then(res => res)
+            .catch(() => {
+                return 'Erro ao gerar código!';
+            })
+
+            console.log(newTicketCode)
+
+            qrCodeImg.src = `https://api.qrserver.com/v1/create-qr-code/?data=${newTicketCode.id_ticket}&size=100x100`;
+
+            ticketCode.textContent = newTicketCode.id_ticket;
+        })
+    </script>
+</body>
+</html>
